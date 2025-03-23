@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        body { 
+            background: linear-gradient(to right, #4A90E2, #145DA0); 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0; 
+        }
+        .login-container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+            width: 100%; 
+            max-width: 400px; 
+        }
+        .password-toggle { 
+            cursor: pointer; 
+            position: absolute; 
+            right: 10px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+        }
+        .spinner-border { 
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h3 class="text-center mb-4">Login</h3>
+
+        <!-- Error Message -->
+        <div id="error-message" class="alert alert-danger d-none" role="alert"></div>
+
+        <!-- Role Selection -->
+        <div class="mb-3">
+            <label for="role" class="form-label">Select Role</label>
+            <select id="role" class="form-select" aria-label="Select your role">
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
+            </select>
+        </div>
+
+        <!-- Email Field -->
+        <div class="mb-3">
+            <input type="email" id="email" class="form-control" placeholder="Email Address" aria-label="Email Address" required>
+        </div>
+
+        <!-- Password Field -->
+        <div class="mb-3 position-relative">
+            <input type="password" id="password" class="form-control" placeholder="Password" aria-label="Password" required>
+            <i class="bi bi-eye-slash password-toggle" onclick="togglePasswordVisibility()"></i>
+        </div>
+
+        <!-- Login Button -->
+        <div class="d-grid">
+            <button class="btn btn-primary" onclick="loginUser()" id="login-button">
+                <span id="login-text">Login</span>
+                <span class="spinner-border spinner-border-sm" id="login-spinner" role="status" aria-hidden="true"></span>
+            </button>
+        </div>
+
+        <!-- Signup & Forgot Password Links -->
+        <div class="text-center mt-3">
+            <a href="forgot-password.html">Forgot Password?</a> | <a href="signup.html">Create an Account</a>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById("password");
+            const toggleIcon = document.querySelector(".password-toggle");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.classList.replace("bi-eye-slash", "bi-eye");
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.classList.replace("bi-eye", "bi-eye-slash");
+            }
+        }
+
+        async function loginUser() {
+            const role = document.getElementById("role").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const errorMessage = document.getElementById("error-message");
+            const loginButton = document.getElementById("login-button");
+            const loginSpinner = document.getElementById("login-spinner");
+            const loginText = document.getElementById("login-text");
+
+            // Show loading spinner
+            loginText.style.display = "none";
+            loginSpinner.style.display = "inline-block";
+            loginButton.disabled = true;
+
+            // Simulate API call (replace with actual fetch/axios call)
+            try {
+                const response = await simulateLoginAPI(email, password);
+                if (response.success) {
+                    if (role === "teacher") {
+                        window.location.href = "teacher-dashboard.html";
+                    } else {
+                        window.location.href = "student-dashboard.html";
+                    }
+                } else {
+                    errorMessage.textContent = "Invalid email or password.";
+                    errorMessage.classList.remove("d-none");
+                }
+            } catch (error) {
+                errorMessage.textContent = "An error occurred. Please try again.";
+                errorMessage.classList.remove("d-none");
+            } finally {
+                // Hide loading spinner
+                loginText.style.display = "inline-block";
+                loginSpinner.style.display = "none";
+                loginButton.disabled = false;
+            }
+        }
+
+        // Simulate API call (replace with actual API integration)
+        function simulateLoginAPI(email, password) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (email === "test@example.com" && password === "password123") {
+                        resolve({ success: true });
+                    } else {
+                        resolve({ success: false });
+                    }
+                }, 1000); // Simulate network delay
+            });
+        }
+    </script>
+
+</body>
+</html>
